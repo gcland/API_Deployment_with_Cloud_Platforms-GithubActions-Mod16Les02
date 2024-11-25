@@ -39,12 +39,13 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run test with pytest
-        run: python app_test.py
+        run: app_test.py
 
   deploy:
     runs-on: ubuntu-latest
 
-    - name: Checkout code
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Python
