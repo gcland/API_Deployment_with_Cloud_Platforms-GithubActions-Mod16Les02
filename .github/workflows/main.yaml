@@ -39,7 +39,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run test with pytest
-        run: app_test.py
+        run: python app_test.py
 
   deploy:
     runs-on: ubuntu-latest
