@@ -12,13 +12,30 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: use python
+      - name: Set up Python
         uses: actions/setup-python@v4
 
+      - name: Install libpq-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev
+
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
       - run: pip install -r requirements.txt
-      - run: python app_test.py
+
+      - name: Print debugging Information
+        run: |
+          echo "Python Version: $(python --version)"
+          echo "Working Directory $(pwd)"
+          echo "Contents of Working Directory: $(1s -1)"
+          echo "Contents of site-packages: $(1s -1 venv/lib/python*/site-packages)"
 
   test:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -26,9 +43,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.12
+
+      - name: Install libpq-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev
 
       - name: Create virtual environment
         run: |
@@ -40,8 +62,16 @@ jobs:
 
       - name: Run test with pytest
         run: python app_test.py
+      
+      - name: Print debugging Information
+        run: |
+          echo "Python Version: $(python --version)"
+          echo "Working Directory $(pwd)"
+          echo "Contents of Working Directory: $(1s -1)"
+          echo "Contents of site-packages: $(1s -1 venv/lib/python*/site-packages)"
 
   deploy:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -52,6 +82,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.12
+
+      - name: Install libpq-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev
 
       - name: Create virtual environment
         run: |
